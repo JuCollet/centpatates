@@ -1,0 +1,118 @@
+@gold : #dbbe18;
+@blue : #18b7db;
+@green : #19c162;
+
+html {
+  overflow: hidden;
+  font-family: 'Source Sans Pro', sans-serif;
+  background-color: @blue;
+}
+
+.animatedBackground {  
+  background-image: url('../img/cloverPattern.png');
+  animation-name: backgroundAnimation;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-duration: 10s;
+}
+
+@keyframes backgroundAnimation {
+    from {background-position: 0px 0px;}
+    to {background-position: 700px 350px;}
+}
+
+#root {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left:0;
+  right: 0;
+  bottom: 0;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#grid-box {
+  padding: 25px;
+  border: 8px solid @gold;
+  border-radius: 15px;
+  background-color: #FFF;
+}
+
+#numbers {
+  margin-bottom: 20px;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left:5px;
+  margin-right: 5px;
+  margin-bottom: 10px;
+  font-size:.9rem;
+  color: #1A1A1A;
+}
+
+.number {
+  border: 2px solid red;
+  border-radius: 2px;
+}
+
+.star {
+  border-radius: 2px;
+  background-image: url('http://clipartall.com/subimg/yellow-star-picture-clipart-yellow-star-clipart-700_700.png');
+  background-size: contain;
+}
+
+.notification-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: @green;
+}
+
+.notification-img {
+  position: relative;
+  min-width: 50%;
+  max-width: 30%;
+  height: 30%;
+  background-image: url('../img/shake.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.notification-message {
+  position: relative;
+  padding: 5% 20%;
+  font-size: 1.5em;
+  text-align: center;
+  color: #FFF;
+  line-height: 100%;
+}
+
+.charm {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  animation-name: charmRotation;
+  animation-duration: 3.5s;
+}
+
+@keyframes charmRotation {
+  from{transform: rotate(0deg);}
+  to{transform: rotate(360deg);}
+}
