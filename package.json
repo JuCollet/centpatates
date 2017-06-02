@@ -4,7 +4,7 @@
   "description": "The winning euromillions combination generator",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server/index.js"
   },
   "repository": {
     "type": "git",
@@ -28,5 +28,8 @@
     "style-loader": "^0.18.1",
     "webpack": "^2.6.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "express": "^4.15.3",
+    "path": "^0.12.7"
+  }
 }

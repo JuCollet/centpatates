@@ -30,16 +30,35 @@ const views = (function(){
     // Notifications - Popup de notification
     //--------------------------------------
     
-    const notification = (message, image) => {
+    const notification = (message, time, img) => {
+        
+        const imgSelect = img => {
+            
+            const baseUrl = '../img/';
+            
+            if(img === 'start'){
+                return baseUrl + 'magic.png';
+            }else if(img === 'number'){
+                return baseUrl + 'charm4.png';
+            }else if(img === 'star'){
+                return baseUrl + 'charm1.png';
+            }else {
+                return 'charm2.png';
+            }
+        };
+        
+        
         if(!notificationRunning) {
             
             notificationRunning = true;
-            _paint("<div class='notification-box'><div class='notification-img'></div><div class='notification-message'>"+message+"</div></div>");
+            $('#grid-box').append("<div class='notification-box'><img src='"+imgSelect(img)+"'></img><div class='notification-message'>"+message+"</div></div>");
             
             setTimeout(function(){
-                $('.notification-box').remove();
+                $('.notification-box').fadeOut(300, function(){
+                    $('.notification-box').remove();
+                });
                 notificationRunning = false;
-            },3000);    
+            },time);    
         }
     };
     
@@ -72,17 +91,26 @@ const views = (function(){
             for(let i = 0; i < 10; i++){
                 $('#numbers').append('<div class="row" id="'+"row"+i+'"></div>');
                 for(let j = 0; j < 5; j++){
-                    $('#row'+i).append("<div class='cell number' style='width:"+numberSize+"px;height:"+numberSize+"px'>"+numbers+"</div>");
+                    $('#row'+i).append("<div class='cell number' id='number"+numbers+"' style='width:"+numberSize+"px;height:"+numberSize+"px'>"+numbers+"</div>");
                     numbers++;
                 }
             }
             
             for(let i = 0; i < 3; i++){
-                $('#stars').append('<div class="row" id="'+"star"+i+'"></div>');
+                $('#stars').append('<div class="row" id="'+"starRow"+i+'"></div>');
                 for(let j = 0; j < 4; j++){
-                  $('#star'+i).append("<div class='cell star' style='width:"+starSize+"px;height:"+starSize+"px'>"+stars+"</div>");
+                  $('#starRow'+i).append("<div class='cell star' id='star"+stars+"' style='width:"+starSize+"px;height:"+starSize+"px'>"+stars+"</div>");
                   stars++;
                 }
+            }
+            
+        },
+        
+        pick : (type,id) => {
+            if(type === 'number'){
+                $('#number'+id).append("<div class='check'></div>");
+            } else if(type === 'star'){
+                $('#star'+id).append("<div class='check'></div>");
             }
             
         }
@@ -95,30 +123,43 @@ const views = (function(){
     
     class Charm {
         
-        constructor(pos, speed, id){
+        constructor(pos, nextPos, id){
             this.posX = pos.x;
             this.posY = pos.y;
-            this.nextPosX = pos.x + speed.x;
-            this.nextPosY = pos.y + speed.y;
-            this.speed = speed.speed;
+            this.nextPosX = nextPos.x;
+            this.nextPosY = nextPos.y;
+            this.speed = nextPos.speed;
             this.id = id;
         }
         
     }
     
     Charm.prototype.build = function(){
-        const imgPath = "https://upload.wikimedia.org/wikipedia/commons/8/8d/Clover_symbol.svg";
-        _paint('<img src="'+imgPath+'" class="charm" id="'+this.id+'"></img>');
+        
+        const charmRandom = _ => {
+            const random = Math.floor(Math.random()*20)+1;
+            if(random > 5 && random < 15){
+                return 4;
+            }else if(random >=15 && random <=20){
+                return 5;
+            } else {
+                return random;
+            }
+        };
+        
+        _paint('<img src="../img/charm'+charmRandom()+'.png" class="charm" id="'+this.id+'"></img>');
         $('#'+this.id)
             .css({"left": this.posX+"px", "top": this.posY+"px"})
-            .animate({left: this.nextPosX+"px", top: this.nextPosY+"px", opacity:"0"}, this.speed, _ => {
-                $('#'+this.id).remove();
+            .animate({left: this.nextPosX+"px", top: this.nextPosY+"px"}, this.speed, _ => {
+                $('#'+this.id).animate({opacity:0}, 250, _ => {
+                    $('#'+this.id).remove();
+                });
             });
     };
     
-    const addCharm = (pos, speed) => {
+    const addCharm = (pos, nextPos) => {
         let currentCharm = charms.length;
-        charms.push(new Charm(pos, speed, charms.length+1));
+        charms.push(new Charm(pos, nextPos, charms.length+1));
         charms[currentCharm].build();
     };
     

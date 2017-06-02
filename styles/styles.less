@@ -1,24 +1,14 @@
 @gold : #dbbe18;
 @blue : #18b7db;
 @green : #19c162;
+@night : #143036;
 
 html {
   overflow: hidden;
-  font-family: 'Source Sans Pro', sans-serif;
-  background-color: @blue;
-}
-
-.animatedBackground {  
-  background-image: url('../img/cloverPattern.png');
-  animation-name: backgroundAnimation;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-  animation-duration: 10s;
-}
-
-@keyframes backgroundAnimation {
-    from {background-position: 0px 0px;}
-    to {background-position: 700px 350px;}
+  font-family: 'Lato', sans-serif;
+  background-image: url('../img/pattern.png');
+  background-repeat: repeat;
+  background-size: 400px;
 }
 
 #root {
@@ -34,14 +24,12 @@ html {
 }
 
 #grid-box {
+  position: relative;
   padding: 25px;
-  border: 8px solid @gold;
+  border: 5px solid @gold;
   border-radius: 15px;
   background-color: #FFF;
-}
-
-#numbers {
-  margin-bottom: 20px;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2);
 }
 
 .row {
@@ -50,6 +38,7 @@ html {
 }
 
 .cell {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -60,8 +49,12 @@ html {
   color: #1A1A1A;
 }
 
+#numbers {
+  margin-bottom: 20px;
+}
+
 .number {
-  border: 2px solid red;
+  border: 1px solid red;
   border-radius: 2px;
 }
 
@@ -71,34 +64,40 @@ html {
   background-size: contain;
 }
 
+.check {
+  position: absolute;
+  top:0;
+  left:0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../img/check.png');
+  background-size: contain;
+}
+
 .notification-box {
+  position: absolute;
+  top:0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: @green;
-}
+  background-color: @night;
+  border-radius: 10px;
 
-.notification-img {
-  position: relative;
-  min-width: 50%;
-  max-width: 30%;
-  height: 30%;
-  background-image: url('../img/shake.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center center;
+  img {
+    width: 50%;
+  }
+  
 }
 
 .notification-message {
   position: relative;
-  padding: 5% 20%;
+  padding: 15% 20%;
   font-size: 1.5em;
+  font-weight: 900;
   text-align: center;
   color: #FFF;
   line-height: 100%;

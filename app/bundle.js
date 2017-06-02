@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -106,16 +106,34 @@ var views = function () {
     // Notifications - Popup de notification
     //--------------------------------------
 
-    var notification = function notification(message, image) {
+    var notification = function notification(message, time, img) {
+
+        var imgSelect = function imgSelect(img) {
+
+            var baseUrl = '../img/';
+
+            if (img === 'start') {
+                return baseUrl + 'magic.png';
+            } else if (img === 'number') {
+                return baseUrl + 'charm4.png';
+            } else if (img === 'star') {
+                return baseUrl + 'charm1.png';
+            } else {
+                return 'charm2.png';
+            }
+        };
+
         if (!notificationRunning) {
 
             notificationRunning = true;
-            _paint("<div class='notification-box'><div class='notification-img'></div><div class='notification-message'>" + message + "</div></div>");
+            $('#grid-box').append("<div class='notification-box'><img src='" + imgSelect(img) + "'></img><div class='notification-message'>" + message + "</div></div>");
 
             setTimeout(function () {
-                $('.notification-box').remove();
+                $('.notification-box').fadeOut(300, function () {
+                    $('.notification-box').remove();
+                });
                 notificationRunning = false;
-            }, 3000);
+            }, time);
         }
     };
 
@@ -147,17 +165,25 @@ var views = function () {
             for (var i = 0; i < 10; i++) {
                 $('#numbers').append('<div class="row" id="' + "row" + i + '"></div>');
                 for (var j = 0; j < 5; j++) {
-                    $('#row' + i).append("<div class='cell number' style='width:" + numberSize + "px;height:" + numberSize + "px'>" + numbers + "</div>");
+                    $('#row' + i).append("<div class='cell number' id='number" + numbers + "' style='width:" + numberSize + "px;height:" + numberSize + "px'>" + numbers + "</div>");
                     numbers++;
                 }
             }
 
             for (var _i = 0; _i < 3; _i++) {
-                $('#stars').append('<div class="row" id="' + "star" + _i + '"></div>');
+                $('#stars').append('<div class="row" id="' + "starRow" + _i + '"></div>');
                 for (var _j = 0; _j < 4; _j++) {
-                    $('#star' + _i).append("<div class='cell star' style='width:" + starSize + "px;height:" + starSize + "px'>" + stars + "</div>");
+                    $('#starRow' + _i).append("<div class='cell star' id='star" + stars + "' style='width:" + starSize + "px;height:" + starSize + "px'>" + stars + "</div>");
                     stars++;
                 }
+            }
+        },
+
+        pick: function pick(type, id) {
+            if (type === 'number') {
+                $('#number' + id).append("<div class='check'></div>");
+            } else if (type === 'star') {
+                $('#star' + id).append("<div class='check'></div>");
             }
         }
 
@@ -166,30 +192,42 @@ var views = function () {
     // Charms animation - Fait apparaitre les portes-bonheur
     // -----------------------------------------------------
 
-    var Charm = function Charm(pos, speed, id) {
+    var Charm = function Charm(pos, nextPos, id) {
         _classCallCheck(this, Charm);
 
         this.posX = pos.x;
         this.posY = pos.y;
-        this.nextPosX = pos.x + speed.x;
-        this.nextPosY = pos.y + speed.y;
-        this.speed = speed.speed;
+        this.nextPosX = nextPos.x;
+        this.nextPosY = nextPos.y;
+        this.speed = nextPos.speed;
         this.id = id;
     };
 
     Charm.prototype.build = function () {
         var _this = this;
 
-        var imgPath = "https://upload.wikimedia.org/wikipedia/commons/8/8d/Clover_symbol.svg";
-        _paint('<img src="' + imgPath + '" class="charm" id="' + this.id + '"></img>');
-        $('#' + this.id).css({ "left": this.posX + "px", "top": this.posY + "px" }).animate({ left: this.nextPosX + "px", top: this.nextPosY + "px", opacity: "0" }, this.speed, function (_) {
-            $('#' + _this.id).remove();
+        var charmRandom = function charmRandom(_) {
+            var random = Math.floor(Math.random() * 20) + 1;
+            if (random > 5 && random < 15) {
+                return 4;
+            } else if (random >= 15 && random <= 20) {
+                return 5;
+            } else {
+                return random;
+            }
+        };
+
+        _paint('<img src="../img/charm' + charmRandom() + '.png" class="charm" id="' + this.id + '"></img>');
+        $('#' + this.id).css({ "left": this.posX + "px", "top": this.posY + "px" }).animate({ left: this.nextPosX + "px", top: this.nextPosY + "px" }, this.speed, function (_) {
+            $('#' + _this.id).animate({ opacity: 0 }, 250, function (_) {
+                $('#' + _this.id).remove();
+            });
         });
     };
 
-    var addCharm = function addCharm(pos, speed) {
+    var addCharm = function addCharm(pos, nextPos) {
         var currentCharm = charms.length;
-        charms.push(new Charm(pos, speed, charms.length + 1));
+        charms.push(new Charm(pos, nextPos, charms.length + 1));
         charms[currentCharm].build();
     };
 
@@ -216,10 +254,139 @@ exports.default = views;
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _views = __webpack_require__(0);
+
+var _views2 = _interopRequireDefault(_views);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var controllers = function () {
+
+    var combination = [];
+
+    // Detection validation - Verifie les coordonnées
+    // ----------------------------------------------
+
+    var _validateDetection = function _validateDetection(x, y, width, height) {
+
+        var posX = Math.floor(Math.random() * width);
+        var posY = Math.floor(Math.random() * height);
+
+        return {
+            posX: posX,
+            posY: posY,
+            nextX: posX + 10 * x,
+            nextY: posY + 10 * y
+        };
+    };
+
+    // Game - Mécanisme de jeu
+    // -----------------------
+
+    var motionDetect = function motionDetect(width, height) {
+
+        var moveX = void 0,
+            moveY = void 0,
+            moveZ = void 0,
+            forceCounter = 0,
+            numbersRevealed = 0;
+
+        window.addEventListener('devicemotion', function (event) {
+            moveX = Math.round(event.accelerationIncludingGravity.x);
+            moveY = Math.round(event.accelerationIncludingGravity.y);
+            moveZ = Math.round(event.accelerationIncludingGravity.z);
+        });
+
+        var game = setInterval(function () {
+            var nextMove = _validateDetection(moveX, moveY, width, height);
+            var force = Math.abs(moveX) + Math.abs(moveY) + Math.abs(moveZ);
+
+            var nextStep = function nextStep(_) {
+                numbersRevealed++;
+                _combinationGenerator(numbersRevealed);
+                if ("vibrate" in window.navigator) {
+                    window.navigator.vibrate(200);
+                }
+            };
+
+            if (force > 20) {
+                forceCounter += force;
+                _views2.default.addCharm({ x: nextMove.posX, y: nextMove.posY }, { x: nextMove.nextX, y: nextMove.nextY, speed: force * 50 });
+
+                if (forceCounter >= 1000 && numbersRevealed < 1) {
+                    nextStep();
+                } else if (forceCounter >= 2000 && numbersRevealed < 2) {
+                    nextStep();
+                } else if (forceCounter >= 3000 && numbersRevealed < 3) {
+                    nextStep();
+                } else if (forceCounter >= 4000 && numbersRevealed < 4) {
+                    nextStep();
+                } else if (forceCounter >= 5000 && numbersRevealed < 5) {
+                    nextStep();
+                } else if (forceCounter >= 6000 && numbersRevealed < 6) {
+                    nextStep();
+                } else if (forceCounter >= 7000 && numbersRevealed < 7) {
+                    nextStep();
+                }
+
+                if (numbersRevealed === 7) {
+                    clearInterval(game);
+                }
+            }
+        }, 50);
+    };
+
+    // Combination generator - Génère la combinaison
+    // ---------------------------------------------
+
+
+    var _combinationGenerator = function _combinationGenerator(revealed) {
+
+        if (revealed < 6) {
+            var newNumber = Math.floor(Math.random() * 50) + 1;
+            if (combination.indexOf(newNumber) !== -1) {
+                _combinationGenerator(revealed);
+            } else {
+                combination.push(newNumber);
+                _views2.default.grid.pick('number', newNumber);
+                var notificationMessage = 'Numéro ' + newNumber;
+                _views2.default.notification(notificationMessage, 2000, 'number');
+            }
+        } else {
+            var newStar = Math.floor(Math.random() * 12) + 1;
+            if (combination.indexOf(newStar) !== -1) {
+                _combinationGenerator(revealed);
+            } else {
+                combination.push(newStar);
+                _views2.default.grid.pick('star', newStar);
+                var _notificationMessage = 'Etoile ' + newStar;
+                _views2.default.notification(_notificationMessage, 2000, 'star');
+            }
+        }
+    };
+
+    return {
+        motionDetect: motionDetect
+    };
+}();
+
+exports.default = controllers;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(5);
+var content = __webpack_require__(6);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -227,7 +394,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(8)(content, options);
+var update = __webpack_require__(9)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -244,33 +411,39 @@ if(false) {
 }
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/*global $*/
 
 
-__webpack_require__(1);
+__webpack_require__(2);
 
 var _views = __webpack_require__(0);
 
 var _views2 = _interopRequireDefault(_views);
 
+var _controllers = __webpack_require__(1);
+
+var _controllers2 = _interopRequireDefault(_controllers);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var charms = [];
+var height = $(document).height();
+var width = $(document).width();
 
-_views2.default.changeView(_views2.default.grid.build);
-setTimeout(function () {
-    _views2.default.addCharm({ x: 600, y: 75 }, { x: -50, y: 84, speed: 1000 });
-    _views2.default.addCharm({ x: 450, y: 185 }, { x: -90, y: -120, speed: 2540 });
-    _views2.default.addCharm({ x: 500, y: 200 }, { x: 10, y: 36, speed: 785 });
-    _views2.default.addCharm({ x: 650, y: 350 }, { x: 80, y: -84, speed: 1984 });
-    _views2.default.notification('Secouez votre téléphone !');
-}, 500);
+_views2.default.grid.build();
+
+if (window.DeviceMotionEvent) {
+    _views2.default.notification('Secoue ton téléphone !', 3000, 'start');
+    _controllers2.default.motionDetect(width, height);
+} else {
+    _views2.default.notification("Ton téléphone n'est pas compatible :( !", 20000);
+}
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -352,7 +525,7 @@ function toComment(sourceMap) {
 }
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -447,33 +620,33 @@ module.exports = function (css) {
 };
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(3)(undefined);
+exports = module.exports = __webpack_require__(4)(undefined);
 // imports
 
 
 // module
-exports.push([module.i, "html {\n  overflow: hidden;\n  font-family: 'Source Sans Pro', sans-serif;\n  background-color: #18b7db;\n}\n.animatedBackground {\n  background-image: url(" + __webpack_require__(6) + ");\n  animation-name: backgroundAnimation;\n  animation-iteration-count: infinite;\n  animation-timing-function: linear;\n  animation-duration: 10s;\n}\n@keyframes backgroundAnimation {\n  from {\n    background-position: 0px 0px;\n  }\n  to {\n    background-position: 700px 350px;\n  }\n}\n#root {\n  display: flex;\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  justify-content: center;\n  align-items: center;\n  flex-direction: column;\n}\n#grid-box {\n  padding: 25px;\n  border: 8px solid #dbbe18;\n  border-radius: 15px;\n  background-color: #FFF;\n}\n#numbers {\n  margin-bottom: 20px;\n}\n.row {\n  display: flex;\n  justify-content: center;\n}\n.cell {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-left: 5px;\n  margin-right: 5px;\n  margin-bottom: 10px;\n  font-size: .9rem;\n  color: #1A1A1A;\n}\n.number {\n  border: 2px solid red;\n  border-radius: 2px;\n}\n.star {\n  border-radius: 2px;\n  background-image: url('http://clipartall.com/subimg/yellow-star-picture-clipart-yellow-star-clipart-700_700.png');\n  background-size: contain;\n}\n.notification-box {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  align-items: center;\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  background-color: #19c162;\n}\n.notification-img {\n  position: relative;\n  min-width: 50%;\n  max-width: 30%;\n  height: 30%;\n  background-image: url(" + __webpack_require__(7) + ");\n  background-size: contain;\n  background-repeat: no-repeat;\n  background-position: center center;\n}\n.notification-message {\n  position: relative;\n  padding: 5% 20%;\n  font-size: 1.5em;\n  text-align: center;\n  color: #FFF;\n  line-height: 100%;\n}\n.charm {\n  position: absolute;\n  width: 50px;\n  height: 50px;\n  animation-name: charmRotation;\n  animation-duration: 3.5s;\n}\n@keyframes charmRotation {\n  from {\n    transform: rotate(0deg);\n  }\n  to {\n    transform: rotate(360deg);\n  }\n}\n", ""]);
+exports.push([module.i, "html {\n  overflow: hidden;\n  font-family: 'Lato', sans-serif;\n  background-image: url(" + __webpack_require__(8) + ");\n  background-repeat: repeat;\n  background-size: 400px;\n}\n#root {\n  display: flex;\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  justify-content: center;\n  align-items: center;\n  flex-direction: column;\n}\n#grid-box {\n  position: relative;\n  padding: 25px;\n  border: 5px solid #dbbe18;\n  border-radius: 15px;\n  background-color: #FFF;\n  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);\n}\n.row {\n  display: flex;\n  justify-content: center;\n}\n.cell {\n  position: relative;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-left: 5px;\n  margin-right: 5px;\n  margin-bottom: 10px;\n  font-size: .9rem;\n  color: #1A1A1A;\n}\n#numbers {\n  margin-bottom: 20px;\n}\n.number {\n  border: 1px solid red;\n  border-radius: 2px;\n}\n.star {\n  border-radius: 2px;\n  background-image: url('http://clipartall.com/subimg/yellow-star-picture-clipart-yellow-star-clipart-700_700.png');\n  background-size: contain;\n}\n.check {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-image: url(" + __webpack_require__(7) + ");\n  background-size: contain;\n}\n.notification-box {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  align-items: center;\n  background-color: #143036;\n  border-radius: 10px;\n}\n.notification-box img {\n  width: 50%;\n}\n.notification-message {\n  position: relative;\n  padding: 15% 20%;\n  font-size: 1.5em;\n  font-weight: 900;\n  text-align: center;\n  color: #FFF;\n  line-height: 100%;\n}\n.charm {\n  position: absolute;\n  width: 50px;\n  height: 50px;\n  animation-name: charmRotation;\n  animation-duration: 3.5s;\n}\n@keyframes charmRotation {\n  from {\n    transform: rotate(0deg);\n  }\n  to {\n    transform: rotate(360deg);\n  }\n}\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__.p + "/img/cloverPattern.png";
-
-/***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__.p + "/img/shake.png";
+module.exports = __webpack_require__.p + "/img/check.png";
 
 /***/ }),
 /* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "/img/pattern.png";
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -519,7 +692,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(4);
+var	fixUrls = __webpack_require__(5);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
