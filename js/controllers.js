@@ -52,13 +52,13 @@ const controllers = (function(){
                 forceCounter += force;
                 view.addCharm({x:nextMove.posX,y:nextMove.posY},{x:nextMove.nextX,y:nextMove.nextY,speed:force*50});
                 
-                if(forceCounter >= 1000 && numbersRevealed < 1){nextStep();} 
-                else if(forceCounter >= 2000 && numbersRevealed < 2){nextStep();}
-                else if(forceCounter >= 3000 && numbersRevealed < 3){nextStep();}
-                else if(forceCounter >= 4000 && numbersRevealed < 4){nextStep();}
-                else if(forceCounter >= 5000 && numbersRevealed < 5){nextStep();}
-                else if(forceCounter >= 6000 && numbersRevealed < 6){nextStep();}
-                else if(forceCounter >= 7000 && numbersRevealed < 7){nextStep();}
+                if(forceCounter >= 500 && numbersRevealed < 1){nextStep();} 
+                else if(forceCounter >= 1000 && numbersRevealed < 2){nextStep();}
+                else if(forceCounter >= 1500 && numbersRevealed < 3){nextStep();}
+                else if(forceCounter >= 2000 && numbersRevealed < 4){nextStep();}
+                else if(forceCounter >= 2500 && numbersRevealed < 5){nextStep();}
+                else if(forceCounter >= 3000 && numbersRevealed < 6){nextStep();}
+                else if(forceCounter >= 3500 && numbersRevealed < 7){nextStep();}
 
                 if(numbersRevealed === 7){
                     clearInterval(game);

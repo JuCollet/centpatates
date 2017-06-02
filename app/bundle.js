@@ -308,19 +308,19 @@ var controllers = function () {
                 forceCounter += force;
                 _views2.default.addCharm({ x: nextMove.posX, y: nextMove.posY }, { x: nextMove.nextX, y: nextMove.nextY, speed: force * 50 });
 
-                if (forceCounter >= 1000 && numbersRevealed < 1) {
+                if (forceCounter >= 500 && numbersRevealed < 1) {
                     nextStep();
-                } else if (forceCounter >= 2000 && numbersRevealed < 2) {
+                } else if (forceCounter >= 1000 && numbersRevealed < 2) {
                     nextStep();
-                } else if (forceCounter >= 3000 && numbersRevealed < 3) {
+                } else if (forceCounter >= 1500 && numbersRevealed < 3) {
                     nextStep();
-                } else if (forceCounter >= 4000 && numbersRevealed < 4) {
+                } else if (forceCounter >= 2000 && numbersRevealed < 4) {
                     nextStep();
-                } else if (forceCounter >= 5000 && numbersRevealed < 5) {
+                } else if (forceCounter >= 2500 && numbersRevealed < 5) {
                     nextStep();
-                } else if (forceCounter >= 6000 && numbersRevealed < 6) {
+                } else if (forceCounter >= 3000 && numbersRevealed < 6) {
                     nextStep();
-                } else if (forceCounter >= 7000 && numbersRevealed < 7) {
+                } else if (forceCounter >= 3500 && numbersRevealed < 7) {
                     nextStep();
                 }
 
