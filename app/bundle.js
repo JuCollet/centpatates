@@ -137,17 +137,6 @@ var views = function () {
         }
     };
 
-    // Welcome - Page d'accueil de l'app
-    // ---------------------------------
-
-    var welcome = {
-
-        build: function build(_) {
-            _paint("<h1>Hello!</h1>");
-        }
-
-    };
-
     // Grid - Grille de jeu
     // --------------------
 
@@ -241,7 +230,6 @@ var views = function () {
 
     return {
         grid: grid,
-        welcome: welcome,
         changeView: changeView,
         notification: notification,
         addCharm: addCharm
@@ -394,7 +382,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(9)(content, options);
+var update = __webpack_require__(10)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -628,7 +616,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, "html {\n  overflow: hidden;\n  font-family: 'Lato', sans-serif;\n  background-image: url(" + __webpack_require__(8) + ");\n  background-repeat: repeat;\n  background-size: 400px;\n}\n#root {\n  display: flex;\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  justify-content: center;\n  align-items: center;\n  flex-direction: column;\n}\n#grid-box {\n  position: relative;\n  padding: 25px;\n  border: 5px solid #dbbe18;\n  border-radius: 15px;\n  background-color: #FFF;\n  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);\n}\n.row {\n  display: flex;\n  justify-content: center;\n}\n.cell {\n  position: relative;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-left: 5px;\n  margin-right: 5px;\n  margin-bottom: 10px;\n  font-size: .9rem;\n  color: #1A1A1A;\n}\n#numbers {\n  margin-bottom: 20px;\n}\n.number {\n  border: 1px solid red;\n  border-radius: 2px;\n}\n.star {\n  border-radius: 2px;\n  background-image: url('http://clipartall.com/subimg/yellow-star-picture-clipart-yellow-star-clipart-700_700.png');\n  background-size: contain;\n}\n.check {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-image: url(" + __webpack_require__(7) + ");\n  background-size: contain;\n}\n.notification-box {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  align-items: center;\n  background-color: #143036;\n  border-radius: 10px;\n}\n.notification-box img {\n  width: 50%;\n}\n.notification-message {\n  position: relative;\n  padding: 15% 20%;\n  font-size: 1.5em;\n  font-weight: 900;\n  text-align: center;\n  color: #FFF;\n  line-height: 100%;\n}\n.charm {\n  position: absolute;\n  width: 50px;\n  height: 50px;\n  animation-name: charmRotation;\n  animation-duration: 3.5s;\n}\n@keyframes charmRotation {\n  from {\n    transform: rotate(0deg);\n  }\n  to {\n    transform: rotate(360deg);\n  }\n}\n", ""]);
+exports.push([module.i, "html {\n  overflow: hidden;\n  font-family: 'Lato', sans-serif;\n  background-image: url(" + __webpack_require__(8) + ");\n  background-repeat: repeat;\n  background-size: 400px;\n}\n#root {\n  display: flex;\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  justify-content: center;\n  align-items: center;\n  flex-direction: column;\n}\n#grid-box {\n  position: relative;\n  padding: 25px;\n  border: 5px solid #dbbe18;\n  border-radius: 15px;\n  background-color: #FFF;\n  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);\n}\n.row {\n  display: flex;\n  justify-content: center;\n}\n.cell {\n  position: relative;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-left: 5px;\n  margin-right: 5px;\n  margin-bottom: 10px;\n  font-size: .9rem;\n  color: #1A1A1A;\n}\n#numbers {\n  margin-bottom: 20px;\n}\n.number {\n  border: 1px solid red;\n  border-radius: 2px;\n}\n.star {\n  border-radius: 2px;\n  background-image: url(" + __webpack_require__(9) + ");\n  background-size: contain;\n}\n.check {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-image: url(" + __webpack_require__(7) + ");\n  background-size: contain;\n}\n.notification-box {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  align-items: center;\n  background-color: #143036;\n  border-radius: 10px;\n}\n.notification-box img {\n  width: 50%;\n}\n.notification-message {\n  position: relative;\n  padding: 15% 20%;\n  font-size: 1.5em;\n  font-weight: 900;\n  text-align: center;\n  color: #FFF;\n  line-height: 100%;\n}\n.charm {\n  position: absolute;\n  width: 50px;\n  height: 50px;\n  animation-name: charmRotation;\n  animation-duration: 3.5s;\n}\n@keyframes charmRotation {\n  from {\n    transform: rotate(0deg);\n  }\n  to {\n    transform: rotate(360deg);\n  }\n}\n", ""]);
 
 // exports
 
@@ -647,6 +635,12 @@ module.exports = __webpack_require__.p + "/img/pattern.png";
 
 /***/ }),
 /* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "/img/star.png";
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*

@@ -62,19 +62,7 @@ const views = (function(){
         }
     };
     
-    
-    // Welcome - Page d'accueil de l'app
-    // ---------------------------------
-    
-    const welcome = {
-        
-        build : _ => {
-            _paint("<h1>Hello!</h1>");
-        }
-        
-    };
 
-    
     // Grid - Grille de jeu
     // --------------------
 
@@ -174,7 +162,6 @@ const views = (function(){
     
     return {
         grid : grid,
-        welcome : welcome,
         changeView : changeView,
         notification : notification,
         addCharm : addCharm
