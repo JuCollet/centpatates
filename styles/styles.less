@@ -56,6 +56,7 @@ html {
 .number {
   border: 1px solid red;
   border-radius: 2px;
+  background-color: #FFFFFF;
 }
 
 .star {
@@ -81,7 +82,6 @@ html {
   left: 0;
   right: 0;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: @night;
@@ -91,6 +91,14 @@ html {
     width: 50%;
   }
   
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
 }
 
 .notification-message {
@@ -114,4 +122,17 @@ html {
 @keyframes charmRotation {
   from{transform: rotate(0deg);}
   to{transform: rotate(360deg);}
+}
+
+.retry {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -23px;
+  margin:auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  background-image: url('../app/img/refresh.png');
+  background-size: contain;
 }

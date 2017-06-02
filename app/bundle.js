@@ -63,11 +63,207 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _views = __webpack_require__(3);
+
+var _views2 = _interopRequireDefault(_views);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var controllers = function () {
+
+    var combination = [];
+    var height = $(document).height();
+    var width = $(document).width();
+
+    // Detection validation - Verifie les coordonnées
+    // ----------------------------------------------
+
+    var _validateDetection = function _validateDetection(x, y, width, height) {
+
+        var posX = Math.floor(Math.random() * width);
+        var posY = Math.floor(Math.random() * height);
+
+        return {
+            posX: posX,
+            posY: posY,
+            nextX: posX + 10 * x,
+            nextY: posY + 10 * y
+        };
+    };
+
+    // Game - Mécanisme de jeu
+    // -----------------------
+
+    var motionDetect = function motionDetect(width, height) {
+
+        var moveX = void 0,
+            moveY = void 0,
+            moveZ = void 0,
+            forceCounter = 0,
+            numbersRevealed = 0;
+
+        window.addEventListener('devicemotion', function (event) {
+            moveX = Math.round(event.accelerationIncludingGravity.x);
+            moveY = Math.round(event.accelerationIncludingGravity.y);
+            moveZ = Math.round(event.accelerationIncludingGravity.z);
+        });
+
+        var game = setInterval(function () {
+            var nextMove = _validateDetection(moveX, moveY, width, height);
+            var force = Math.abs(moveX) + Math.abs(moveY) + Math.abs(moveZ);
+
+            var nextStep = function nextStep(_) {
+                numbersRevealed++;
+                _combinationGenerator(numbersRevealed);
+                if ("vibrate" in window.navigator) {
+                    window.navigator.vibrate(200);
+                }
+            };
+
+            if (force > 20) {
+                forceCounter += force;
+                _views2.default.addCharm({ x: nextMove.posX, y: nextMove.posY }, { x: nextMove.nextX, y: nextMove.nextY, speed: force * 50 });
+
+                if (forceCounter >= 500 && numbersRevealed < 1) {
+                    nextStep();
+                } else if (forceCounter >= 1000 && numbersRevealed < 2) {
+                    nextStep();
+                } else if (forceCounter >= 1500 && numbersRevealed < 3) {
+                    nextStep();
+                } else if (forceCounter >= 2000 && numbersRevealed < 4) {
+                    nextStep();
+                } else if (forceCounter >= 2500 && numbersRevealed < 5) {
+                    nextStep();
+                } else if (forceCounter >= 3000 && numbersRevealed < 6) {
+                    nextStep();
+                } else if (forceCounter >= 3500 && numbersRevealed < 7) {
+                    nextStep();
+                }
+
+                if (numbersRevealed === 7) {
+                    clearInterval(game);
+                    _views2.default.retry();
+                }
+            }
+        }, 50);
+    };
+
+    // Combination generator - Génère la combinaison
+    // ---------------------------------------------
+
+
+    var _combinationGenerator = function _combinationGenerator(revealed) {
+
+        if (revealed < 6) {
+            var newNumber = Math.floor(Math.random() * 50) + 1;
+            if (combination.indexOf(newNumber) !== -1) {
+                _combinationGenerator(revealed);
+            } else {
+                combination.push(newNumber);
+                _views2.default.grid.pick('number', newNumber);
+                var notificationMessage = 'Numéro ' + newNumber;
+                _views2.default.notification(notificationMessage, 2000, 'number');
+            }
+        } else {
+            var newStar = Math.floor(Math.random() * 12) + 1;
+            if (combination.indexOf(newStar) !== -1) {
+                _combinationGenerator(revealed);
+            } else {
+                combination.push(newStar);
+                _views2.default.grid.pick('star', newStar);
+                var _notificationMessage = 'Etoile ' + newStar;
+                _views2.default.notification(_notificationMessage, 2000, 'star');
+            }
+        }
+    };
+
+    // Start - Launch the game !
+    // -------------------------
+
+    var start = function start() {
+        combination = [];
+        _views2.default.changeView(_views2.default.grid.build);
+        if (window.DeviceMotionEvent) {
+            _views2.default.notification('Secoue ton téléphone !', 3000, 'start');
+            motionDetect(width, height);
+        } else {
+            _views2.default.notification("Ton téléphone n'est pas compatible :( !", 20000);
+        }
+    };
+
+    return {
+        motionDetect: motionDetect,
+        start: start
+    };
+}();
+
+exports.default = controllers;
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(6);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(10)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../node_modules/css-loader/index.js!../node_modules/less-loader/dist/index.js!./styles.less", function() {
+			var newContent = require("!!../node_modules/css-loader/index.js!../node_modules/less-loader/dist/index.js!./styles.less");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*global $*/
+
+
+__webpack_require__(1);
+
+var _controllers = __webpack_require__(0);
+
+var _controllers2 = _interopRequireDefault(_controllers);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_controllers2.default.start();
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78,6 +274,12 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _controllers = __webpack_require__(0);
+
+var _controllers2 = _interopRequireDefault(_controllers);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -126,7 +328,7 @@ var views = function () {
         if (!notificationRunning) {
 
             notificationRunning = true;
-            $('#grid-box').append("<div class='notification-box'><img src='" + imgSelect(img) + "'></img><div class='notification-message'>" + message + "</div></div>");
+            $('#grid-box').append("<div class='notification-box flex-column'><img src='" + imgSelect(img) + "'></img><div class='notification-message'>" + message + "</div></div>");
 
             setTimeout(function () {
                 $('.notification-box').fadeOut(300, function () {
@@ -220,9 +422,17 @@ var views = function () {
         charms[currentCharm].build();
     };
 
-    // Final - Panneau final
-    // ---------------------
+    // Final - Retry button
+    // --------------------
 
+    var retry = function retry(_) {
+
+        $('#grid-box').append('<div class="retry"></div>');
+
+        $('.retry').click(function () {
+            _controllers2.default.start();
+        });
+    };
 
     // Error - Affiché si device non-compatible
     // ----------------------------------------
@@ -232,203 +442,12 @@ var views = function () {
         grid: grid,
         changeView: changeView,
         notification: notification,
-        addCharm: addCharm
+        addCharm: addCharm,
+        retry: retry
     };
 }(); // End module
 
 exports.default = views;
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _views = __webpack_require__(0);
-
-var _views2 = _interopRequireDefault(_views);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var controllers = function () {
-
-    var combination = [];
-
-    // Detection validation - Verifie les coordonnées
-    // ----------------------------------------------
-
-    var _validateDetection = function _validateDetection(x, y, width, height) {
-
-        var posX = Math.floor(Math.random() * width);
-        var posY = Math.floor(Math.random() * height);
-
-        return {
-            posX: posX,
-            posY: posY,
-            nextX: posX + 10 * x,
-            nextY: posY + 10 * y
-        };
-    };
-
-    // Game - Mécanisme de jeu
-    // -----------------------
-
-    var motionDetect = function motionDetect(width, height) {
-
-        var moveX = void 0,
-            moveY = void 0,
-            moveZ = void 0,
-            forceCounter = 0,
-            numbersRevealed = 0;
-
-        window.addEventListener('devicemotion', function (event) {
-            moveX = Math.round(event.accelerationIncludingGravity.x);
-            moveY = Math.round(event.accelerationIncludingGravity.y);
-            moveZ = Math.round(event.accelerationIncludingGravity.z);
-        });
-
-        var game = setInterval(function () {
-            var nextMove = _validateDetection(moveX, moveY, width, height);
-            var force = Math.abs(moveX) + Math.abs(moveY) + Math.abs(moveZ);
-
-            var nextStep = function nextStep(_) {
-                numbersRevealed++;
-                _combinationGenerator(numbersRevealed);
-                if ("vibrate" in window.navigator) {
-                    window.navigator.vibrate(200);
-                }
-            };
-
-            if (force > 20) {
-                forceCounter += force;
-                _views2.default.addCharm({ x: nextMove.posX, y: nextMove.posY }, { x: nextMove.nextX, y: nextMove.nextY, speed: force * 50 });
-
-                if (forceCounter >= 500 && numbersRevealed < 1) {
-                    nextStep();
-                } else if (forceCounter >= 1000 && numbersRevealed < 2) {
-                    nextStep();
-                } else if (forceCounter >= 1500 && numbersRevealed < 3) {
-                    nextStep();
-                } else if (forceCounter >= 2000 && numbersRevealed < 4) {
-                    nextStep();
-                } else if (forceCounter >= 2500 && numbersRevealed < 5) {
-                    nextStep();
-                } else if (forceCounter >= 3000 && numbersRevealed < 6) {
-                    nextStep();
-                } else if (forceCounter >= 3500 && numbersRevealed < 7) {
-                    nextStep();
-                }
-
-                if (numbersRevealed === 7) {
-                    clearInterval(game);
-                }
-            }
-        }, 50);
-    };
-
-    // Combination generator - Génère la combinaison
-    // ---------------------------------------------
-
-
-    var _combinationGenerator = function _combinationGenerator(revealed) {
-
-        if (revealed < 6) {
-            var newNumber = Math.floor(Math.random() * 50) + 1;
-            if (combination.indexOf(newNumber) !== -1) {
-                _combinationGenerator(revealed);
-            } else {
-                combination.push(newNumber);
-                _views2.default.grid.pick('number', newNumber);
-                var notificationMessage = 'Numéro ' + newNumber;
-                _views2.default.notification(notificationMessage, 2000, 'number');
-            }
-        } else {
-            var newStar = Math.floor(Math.random() * 12) + 1;
-            if (combination.indexOf(newStar) !== -1) {
-                _combinationGenerator(revealed);
-            } else {
-                combination.push(newStar);
-                _views2.default.grid.pick('star', newStar);
-                var _notificationMessage = 'Etoile ' + newStar;
-                _views2.default.notification(_notificationMessage, 2000, 'star');
-            }
-        }
-    };
-
-    return {
-        motionDetect: motionDetect
-    };
-}();
-
-exports.default = controllers;
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(6);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// Prepare cssTransformation
-var transform;
-
-var options = {}
-options.transform = transform
-// add the styles to the DOM
-var update = __webpack_require__(10)(content, options);
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!../node_modules/css-loader/index.js!../node_modules/less-loader/dist/index.js!./styles.less", function() {
-			var newContent = require("!!../node_modules/css-loader/index.js!../node_modules/less-loader/dist/index.js!./styles.less");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*global $*/
-
-
-__webpack_require__(2);
-
-var _views = __webpack_require__(0);
-
-var _views2 = _interopRequireDefault(_views);
-
-var _controllers = __webpack_require__(1);
-
-var _controllers2 = _interopRequireDefault(_controllers);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var height = $(document).height();
-var width = $(document).width();
-
-_views2.default.grid.build();
-
-if (window.DeviceMotionEvent) {
-    _views2.default.notification('Secoue ton téléphone !', 3000, 'start');
-    _controllers2.default.motionDetect(width, height);
-} else {
-    _views2.default.notification("Ton téléphone n'est pas compatible :( !", 20000);
-}
 
 /***/ }),
 /* 4 */
@@ -616,7 +635,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, "html {\n  overflow: hidden;\n  font-family: 'Lato', sans-serif;\n  background-image: url(" + __webpack_require__(8) + ");\n  background-repeat: repeat;\n  background-size: 400px;\n}\n#root {\n  display: flex;\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  justify-content: center;\n  align-items: center;\n  flex-direction: column;\n}\n#grid-box {\n  position: relative;\n  padding: 25px;\n  border: 5px solid #dbbe18;\n  border-radius: 15px;\n  background-color: #FFF;\n  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);\n}\n.row {\n  display: flex;\n  justify-content: center;\n}\n.cell {\n  position: relative;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-left: 5px;\n  margin-right: 5px;\n  margin-bottom: 10px;\n  font-size: .9rem;\n  color: #1A1A1A;\n}\n#numbers {\n  margin-bottom: 20px;\n}\n.number {\n  border: 1px solid red;\n  border-radius: 2px;\n}\n.star {\n  border-radius: 2px;\n  background-image: url(" + __webpack_require__(9) + ");\n  background-size: contain;\n}\n.check {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-image: url(" + __webpack_require__(7) + ");\n  background-size: contain;\n}\n.notification-box {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  align-items: center;\n  background-color: #143036;\n  border-radius: 10px;\n}\n.notification-box img {\n  width: 50%;\n}\n.notification-message {\n  position: relative;\n  padding: 15% 20%;\n  font-size: 1.5em;\n  font-weight: 900;\n  text-align: center;\n  color: #FFF;\n  line-height: 100%;\n}\n.charm {\n  position: absolute;\n  width: 50px;\n  height: 50px;\n  animation-name: charmRotation;\n  animation-duration: 3.5s;\n}\n@keyframes charmRotation {\n  from {\n    transform: rotate(0deg);\n  }\n  to {\n    transform: rotate(360deg);\n  }\n}\n", ""]);
+exports.push([module.i, "html {\n  overflow: hidden;\n  font-family: 'Lato', sans-serif;\n  background-image: url(" + __webpack_require__(8) + ");\n  background-repeat: repeat;\n  background-size: 400px;\n}\n#root {\n  display: flex;\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  justify-content: center;\n  align-items: center;\n  flex-direction: column;\n}\n#grid-box {\n  position: relative;\n  padding: 25px;\n  border: 5px solid #dbbe18;\n  border-radius: 15px;\n  background-color: #FFF;\n  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);\n}\n.row {\n  display: flex;\n  justify-content: center;\n}\n.cell {\n  position: relative;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-left: 5px;\n  margin-right: 5px;\n  margin-bottom: 10px;\n  font-size: .9rem;\n  color: #1A1A1A;\n}\n#numbers {\n  margin-bottom: 20px;\n}\n.number {\n  border: 1px solid red;\n  border-radius: 2px;\n  background-color: #FFFFFF;\n}\n.star {\n  border-radius: 2px;\n  background-image: url(" + __webpack_require__(9) + ");\n  background-size: contain;\n}\n.check {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-image: url(" + __webpack_require__(7) + ");\n  background-size: contain;\n}\n.notification-box {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  background-color: #143036;\n  border-radius: 10px;\n}\n.notification-box img {\n  width: 50%;\n}\n.flex-column {\n  flex-direction: column;\n}\n.flex-row {\n  flex-direction: row;\n}\n.notification-message {\n  position: relative;\n  padding: 15% 20%;\n  font-size: 1.5em;\n  font-weight: 900;\n  text-align: center;\n  color: #FFF;\n  line-height: 100%;\n}\n.charm {\n  position: absolute;\n  width: 50px;\n  height: 50px;\n  animation-name: charmRotation;\n  animation-duration: 3.5s;\n}\n@keyframes charmRotation {\n  from {\n    transform: rotate(0deg);\n  }\n  to {\n    transform: rotate(360deg);\n  }\n}\n.retry {\n  position: absolute;\n  left: 0;\n  right: 0;\n  bottom: -23px;\n  margin: auto;\n  width: 40px;\n  height: 40px;\n  border-radius: 100%;\n  background-image: url(" + __webpack_require__(11) + ");\n  background-size: contain;\n}\n", ""]);
 
 // exports
 
@@ -997,6 +1016,12 @@ function updateLink (link, options, obj) {
 	if(oldSrc) URL.revokeObjectURL(oldSrc);
 }
 
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "/img/refresh.png";
 
 /***/ })
 /******/ ]);

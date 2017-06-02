@@ -5,6 +5,8 @@ import view from './views';
 const controllers = (function(){
     
     let combination = [];
+    const height = $(document).height();
+    const width = $(document).width();
     
     // Detection validation - Verifie les coordonnées
     // ----------------------------------------------
@@ -62,6 +64,7 @@ const controllers = (function(){
 
                 if(numbersRevealed === 7){
                     clearInterval(game);
+                    view.retry();
                 }
                 
             }
@@ -100,8 +103,25 @@ const controllers = (function(){
         
     };
     
+    
+    // Start - Launch the game !
+    // -------------------------
+    
+    const start = () => {
+        combination = [];
+        view.changeView(view.grid.build);
+        if(window.DeviceMotionEvent){
+            view.notification('Secoue ton téléphone !', 3000, 'start');
+            motionDetect(width, height);
+        } else {
+            view.notification("Ton téléphone n'est pas compatible :( !", 20000);
+        }
+    };
+    
+    
     return {
-        motionDetect : motionDetect
+        motionDetect : motionDetect,
+        start : start
     };
     
 }());

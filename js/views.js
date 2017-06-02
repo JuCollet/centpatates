@@ -2,6 +2,8 @@
 
 'use strict';
 
+import controller from './controllers';
+
 const views = (function(){
 
     const height = $(document).height();
@@ -51,7 +53,7 @@ const views = (function(){
         if(!notificationRunning) {
             
             notificationRunning = true;
-            $('#grid-box').append("<div class='notification-box'><img src='"+imgSelect(img)+"'></img><div class='notification-message'>"+message+"</div></div>");
+            $('#grid-box').append("<div class='notification-box flex-column'><img src='"+imgSelect(img)+"'></img><div class='notification-message'>"+message+"</div></div>");
             
             setTimeout(function(){
                 $('.notification-box').fadeOut(300, function(){
@@ -152,10 +154,19 @@ const views = (function(){
     };
     
 
-    // Final - Panneau final
-    // ---------------------
+    // Final - Retry button
+    // --------------------
     
+    const retry = _ => {
+
+        $('#grid-box').append('<div class="retry"></div>');
+
+        $('.retry').click(function(){
+            controller.start();
+        });
+    }
     
+
     // Error - Affiché si device non-compatible
     // ----------------------------------------
     
@@ -164,7 +175,8 @@ const views = (function(){
         grid : grid,
         changeView : changeView,
         notification : notification,
-        addCharm : addCharm
+        addCharm : addCharm,
+        retry : retry
     };
     
 }()); // End module
